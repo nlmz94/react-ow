@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OnlyWeebs — Next.js front
 
-## Getting Started
+Next.js 16 (App Router) front-end for the `symfonyOW` API. A port of `nuxtOW`.
 
-First, run the development server:
+## Pages
+
+| Route          | API used                                   | Rendering                         |
+| -------------- | ------------------------------------------ | --------------------------------- |
+| `/`            | `GET /api/home`                            | Server Component, streamed        |
+| `/search`      | `GET /api/animes?searchTerm=&page=&limit=` | Server Component + client search  |
+| `/anime/[id]`  | `GET /api/animes/{id}`                     | Server Component                  |
+| `/login`       | `POST /api/auth/login`                     | Client form                       |
+| `/register`    | `POST /api/auth/register` (then logs in)   | Client form                       |
+| `/profile`     | `POST /api/me/profile-picture`             | Client, signed-in only            |
+
+The nav bar loads the current user from `GET /api/me` in the browser, logs out via `POST /api/auth/logout`,
+and has a light/dark switcher (`next-themes`, saved in `localStorage`, defaults to the OS preference).
+Icons are Font Awesome Free via `@fortawesome/react-fontawesome`; styling is Tailwind CSS 4.
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The API base URL defaults to `http://localhost:8000/api`; override it with:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_API_BASE=https://api.example.com/api npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`NEXT_PUBLIC_*` values are inlined at build time, so set it before `npm run build` too.
 
-## Learn More
+Auth uses the Symfony session cookie on the API's origin, so the API's `CORS_ALLOW_ORIGIN` must match this app's origin.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run lint        # ESLint
+npm run typecheck   # next typegen + tsc
+npm test            # Vitest (unit + component tests)
+npm run build       # production build
+npm start           # serve the build
+```
