@@ -53,9 +53,19 @@ export function apiFieldErrors(error: unknown): Record<string, string> {
   return Object.fromEntries(violations.map(v => [v.propertyPath, v.title]))
 }
 
-/** Only follows in-app paths; "//host" and "/\host" are treated by browsers as other origins. */
+const SENTINEL_ORIGIN = 'http://app.invalid'
+
+/**
+ * Only follows in-app paths. Resolving against a sentinel origin catches every way
+ * a path can escape it ("//host", "/\host", "/<tab>/host"…), exactly as the router would.
+ */
 export function safeRedirect(value: unknown): string {
-  return typeof value === 'string' && value.startsWith('/') && !value.startsWith('//') && !value.startsWith('/\\')
-    ? value
-    : '/'
+  if (typeof value !== 'string' || !value.startsWith('/')) return '/'
+  try {
+    const url = new URL(value, SENTINEL_ORIGIN)
+    return url.origin === SENTINEL_ORIGIN ? url.pathname + url.search + url.hash : '/'
+  }
+  catch {
+    return '/'
+  }
 }

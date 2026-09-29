@@ -104,6 +104,16 @@ describe('safeRedirect', () => {
     expect(safeRedirect('profile')).toBe('/')
   })
 
+  it('rejects paths that URL parsing turns into another origin (tab/newline stripping)', () => {
+    expect(safeRedirect('/\t/evil.com')).toBe('/')
+    expect(safeRedirect('/\n/evil.com')).toBe('/')
+    expect(safeRedirect('/\r\n/evil.com')).toBe('/')
+  })
+
+  it('keeps the query and hash of in-app paths', () => {
+    expect(safeRedirect('/anime/5?tab=staff#cast')).toBe('/anime/5?tab=staff#cast')
+  })
+
   it('rejects non-strings', () => {
     expect(safeRedirect(undefined)).toBe('/')
     expect(safeRedirect(['/a', '/b'])).toBe('/')

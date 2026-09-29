@@ -28,8 +28,12 @@ export function ProfileView() {
   const [dragging, setDragging] = useState(false)
 
   // The session cookie is on the API origin, so the guard can only run in the browser.
+  // It only turns away visitors who arrived signed out: signing out here is the Nav's
+  // navigation to handle, and a redirect from this effect would supersede it.
+  const hadUser = useRef(false)
   useEffect(() => {
-    if (ready && !user) router.replace('/login?redirect=/profile')
+    if (user) hadUser.current = true
+    else if (ready && !hadUser.current) router.replace('/login?redirect=/profile')
   }, [ready, user, router])
 
   // Free the preview's object URL whenever it's replaced, and on unmount.

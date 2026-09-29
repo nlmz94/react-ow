@@ -41,6 +41,13 @@ describe('ProfileView', () => {
     expect(mocks.replace).toHaveBeenCalledWith('/login?redirect=/profile')
   })
 
+  it('does not hijack the logout navigation when the user signs out on this page', () => {
+    const { rerender } = render(<ProfileView />)
+    mocks.auth.user = null
+    rerender(<ProfileView />)
+    expect(mocks.replace).not.toHaveBeenCalled()
+  })
+
   it('waits for auth before deciding', () => {
     mocks.auth.user = null
     mocks.auth.ready = false
