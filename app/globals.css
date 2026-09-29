@@ -1,26 +1,203 @@
 @import "tailwindcss";
 
+/* next-themes puts data-theme on <html>; make `dark:` follow it rather than the OS setting. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef0f6;
+  --text: #1c1f2a;
+  --muted: #646b7f;
+  --border: #dde1eb;
+  --primary: #6d4aff;
+  --primary-contrast: #ffffff;
+  --danger: #d33f49;
+  --success: #1f9d61;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #12141b;
+  --surface: #1b1e28;
+  --surface-2: #252936;
+  --text: #e8eaf1;
+  --muted: #9aa1b5;
+  --border: #2f3442;
+  --primary: #9b85ff;
+  --primary-contrast: #12141b;
+  --danger: #ff6b74;
+  --success: #4cd28f;
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-contrast: var(--primary-contrast);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-star: #f5b301;
+  --radius-card: var(--radius);
+  --shadow-card: var(--shadow);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    line-height: 1.5;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* Tailwind's preflight zeroes these; restore the browser defaults the Nuxt design relies on. */
+  h1, h2, h3 {
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  h1 { font-size: 2em; margin-block: 0.67em; }
+  h2 { font-size: 1.5em; margin-block: 0.83em; }
+  h3 { font-size: 1.17em; margin-block: 1em; }
+  p { margin-block: 1em; }
+
+  /* Theme-specific images: render both, show the one matching data-theme. */
+  :root:not([data-theme='dark']) .dark-only,
+  :root[data-theme='dark'] .light-only {
+    display: none !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .app-container {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background: var(--surface-2);
+    text-decoration: none;
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-contrast);
+  }
+
+  .btn-primary:hover {
+    background: var(--primary);
+    filter: brightness(1.1);
+  }
+
+  .btn-icon {
+    padding: 8px 10px;
+  }
+
+  .input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+
+  .input:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: -1px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .field label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .field-error {
+    color: var(--danger);
+    font-size: 0.85rem;
+  }
+
+  .alert {
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    margin-bottom: 16px;
+    white-space: pre-line;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 0.8rem;
+  }
+
+  .grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .state {
+    padding: 48px 0;
+    text-align: center;
+    color: var(--muted);
+  }
 }

@@ -68,7 +68,7 @@ describe('apiFetch', () => {
     const problem = { title: 'Unauthorized', status: 401, detail: 'Invalid credentials.' }
     fetchMock.mockResolvedValue(Response.json(problem, { status: 401 }))
 
-    const error = await apiFetch('/auth/login').catch(e => e)
+    const error = await apiFetch<never>('/auth/login').catch((e: ApiError) => e)
 
     expect(error).toBeInstanceOf(ApiError)
     expect(error.status).toBe(401)
@@ -79,7 +79,7 @@ describe('apiFetch', () => {
   it('throws an ApiError without data when the error body is not JSON (e.g. an HTML error page)', async () => {
     fetchMock.mockResolvedValue(new Response('<html>Oops</html>', { status: 500, headers: { 'Content-Type': 'text/html' } }))
 
-    const error = await apiFetch('/home').catch(e => e)
+    const error = await apiFetch<never>('/home').catch((e: ApiError) => e)
 
     expect(error).toBeInstanceOf(ApiError)
     expect(error.status).toBe(500)
