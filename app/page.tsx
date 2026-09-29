@@ -1,6 +1,9 @@
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Form from 'next/form'
+import { Suspense } from 'react'
+import { LoadingState } from '@/components/LoadingState'
+import { HomeContent } from './HomeContent'
 
 export default function HomePage() {
   return (
@@ -14,6 +17,10 @@ export default function HomePage() {
           </button>
         </Form>
       </section>
+
+      <Suspense fallback={<LoadingState />}>
+        <HomeContent />
+      </Suspense>
     </div>
   )
 }
